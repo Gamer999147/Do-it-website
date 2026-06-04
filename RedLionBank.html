@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red Lion Shell Bank - Premium Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #E53935;
+            --primary-dark: #B71C1C;
+            --primary-light: #FFEBEE;
+            --accent: #FFC107;
+            --dark-surface: #1E2229;
+            --bg-gradient: linear-gradient(135deg, #0F1115 0%, #1A1F26 100%);
+            --card-gradient: linear-gradient(135deg, #FF3D00 0%, #D32F2F 100%);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-white: #FFFFFF;
+            --text-gray: #94A3B8;
+            --success: #10B981;
+            --success-light: rgba(16, 185, 129, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-white);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        /* App Wrapper with Glassmorphic design */
+        .container {
+            width: 100%;
+            max-width: 440px;
+            background: rgba(30, 34, 42, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+            padding: 32px 24px;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .hidden { display: none !important; }
+        .text-center { text-align: center; }
+        
+        /* Premium Vector Brand Identity Header */
+        .bank-brand {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+
+        .logo-wrapper {
+            width: 84px;
+            height: 84px;
+            background: rgba(229, 57, 53, 0.1);
+            border: 2px solid rgba(229, 57, 53, 0.2);
+            border-radius: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 16px auto;
+            box-shadow: 0 12px 24px rgba(229, 57, 53, 0.15);
+        }
+
+        .bank-logo-svg {
+            width: 46px;
+            height: 46px;
+            fill: var(--primary);
+            filter: drop-shadow(0 2px 8px rgba(229,57,53,0.3));
+        }
+
+        .bank-name {
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(120deg, #FFF 40%, #FFD700 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .bank-sub {
+            font-size: 0.8rem;
+            color: var(--text-gray);
+            margin-top: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 600;
+        }
+
+        /* Beautiful Floating Form Group inputs */
+        .form-group {
+            margin-bottom: 22px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-gray);
+            letter-spacing: 0.3px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            background: rgba(0, 0, 0, 0.2);
+            color: var(--text-white);
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(0, 0, 0, 0.35);
+            box-shadow: 0 0 0 4px rgba(229, 57, 53, 0.15);
+        }
+
+        /* High-fidelity modern buttons */
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 8px 20px rgba(229, 57, 53, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(229, 57, 53, 0.4);
+        }
+
+        .btn-primary:active { transform: translateY(0); }
+
+        .btn-outline {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-white);
+            margin-top: 14px;
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Luxury Neo-Brutalist Credit Card UI */
+        .account-card {
+            background: var(--card-gradient);
+            color: white;
+            padding: 24px;
+            border-radius: 20px;
+            margin-bottom: 28px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 16px 32px rgba(229, 57, 53, 0.25), inset 0 1px 1px rgba(255,255,255,0.3);
+        }
+
+        .account-card::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 180px;
+            height: 180px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 50%;
+        }
+
+        .acc-profile {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 28px;
+        }
+
+        .acc-name { font-weight: 700; font-size: 1.15rem; letter-spacing: -0.3px; }
+        .acc-number { font-size: 0.8rem; color: rgba(255,255,255,0.7); font-family: monospace; margin-top: 2px; }
+        
+        .chip-icon {
+            width: 38px;
+            height: 28px;
+            background: linear-gradient(135deg, #F0D060 0%, #AE8010 100%);
+            border-radius: 6px;
+            position: relative;
+        }
+
+        .balance-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.2px; color: rgba(255,255,255,0.75); font-weight: 600; }
+        .balance-amount { font-size: 2.3rem; font-weight: 800; margin-top: 2px; letter-spacing: -0.5px; }
+
+        /* Quick Rounded Navigation Icons Grid */
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+
+        .action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            padding: 14px 8px;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-gray);
+            gap: 10px;
+        }
+
+        .action-btn:hover {
+            border-color: var(--primary);
+            color: var(--text-white);
+            background: rgba(229, 57, 53, 0.05);
+            transform: translateY(-4px);
+        }
+
+        .action-btn .icon-box {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.15rem;
+            background: rgba(255, 255, 255, 0.04);
+            transition: all 0.25s;
+        }
+
+        .action-btn:hover .icon-box {
+            background: var(--primary);
+            color: white !important;
+        }
+
+        /* Panel Contextual Form Interface */
+        #transactionPanel {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--glass-border);
+            padding: 20px;
+            border-radius: 18px;
+            margin-bottom: 24px;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Transaction Feed List UI */
+        .history-section {
+            margin-top: 24px;
+        }
+
+        .section-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-white);
+        }
+
+        .transaction-list {
+            max-height: 220px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding-right: 4px;
+        }
+
+        /* Custom Scrollbar */
+        .transaction-list::-webkit-scrollbar { width: 4px; }
+        .transaction-list::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 10px; }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            font-size: 0.88rem;
+            transition: all 0.2s;
+        }
+
+        .transaction-item:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .tx-info h4 { font-weight: 600; font-size: 0.88rem; color: var(--text-white); }
+        .tx-info p { font-size: 0.75rem; color: var(--text-gray); margin-top: 4px; }
+        .tx-amount { font-weight: 700; font-size: 0.95rem; }
+        
+        .tx-deposit .tx-amount { color: var(--success); }
+        .tx-withdraw .tx-amount { color: var(--primary); }
+        .tx-transfer .tx-amount { color: #60A5FA; }
+
+        /* Dynamic Feedback Alert Toasts */
+        .alert {
+            padding: 14px 18px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .alert-error { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.25); color: #FCA5A5; }
+        .alert-success { background: var(--success-light); border: 1px solid rgba(16, 185, 129, 0.25); color: #A7F3D0; }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: var(--text-gray);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: var(--primary); }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="alertBox" class="alert hidden"></div>
+
+        <div class="bank-brand">
+            <div class="logo-wrapper">
+                <svg class="bank-logo-svg" viewBox="0 0 24 24">
+                    <path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.1-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.1.39-1.99 1.03-2.69-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.6 1.03 2.69 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z"/>
+                    <path d="M12 6a2.5 2.5 0 0 1 2.5 2.5C14 10 12 13 12 13s-2-3-2-4.5A2.5 2.5 0 0 1 12 6z" fill="var(--accent)"/>
+                </svg>
+            </div>
+            <div class="bank-name">Red Lion Shell Bank</div>
+            <div class="bank-sub">Premium Digital Node</div>
+        </div>
+
+        <div id="screenLanding">
+            <button class="btn btn-primary" onclick="switchScreen('screenLogin')">
+                <i class="fa-solid fa-key"></i> Secure Account Login
+            </button>
+            <button class="btn btn-outline" onclick="switchScreen('screenSignup')">
+                <i class="fa-solid fa-user-plus"></i> Request Premium Account
+            </button>
+        </div>
+
+        <div id="screenSignup" class="hidden">
+            <h3 style="margin-bottom: 18px; font-weight:700;">Account Application</h3>
+            <form id="signupForm" onsubmit="handleSignup(event)">
+                <div class="form-group">
+                    <label>Legal Full Name</label>
+                    <input type="text" id="signupName" required placeholder="e.g. Alexander Wright">
+                </div>
+                <div class="form-group">
+                    <label>Select Username Identifier</label>
+                    <input type="text" id="signupUser" required placeholder="e.g. alexwright">
+                </div>
+                <div class="form-group">
+                    <label>Access Security Password</label>
+                    <input type="password" id="signupPass" required placeholder="••••••••">
+                </div>
+                <div class="form-group">
+                    <label>Initial Liquidity Capital Deposit ($)</label>
+                    <input type="number" id="signupDeposit" min="10" value="1000" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Initialize Vault Configuration</button>
+            </form>
+            <div class="text-center">
+                <a class="back-link" onclick="switchScreen('screenLanding')"><i class="fa-solid fa-arrow-left-long"></i> Return to Gateway</a>
+            </div>
+        </div>
+
+        <div id="screenLogin" class="hidden">
+            <h3 style="margin-bottom: 18px; font-weight:700;">Secure Node Identity</h3>
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>Username Account ID</label>
+                    <input type="text" id="loginUser" required placeholder="Username">
+                </div>
+                <div class="form-group">
+                    <label>Secret Security Verification Pin</label>
+                    <input type="password" id="loginPass" required placeholder="Password">
+                </div>
+                <button type="submit" class="btn btn-primary">Decrypt Portal Authorization</button>
+            </form>
+            <div class="text-center">
+                <a class="back-link" onclick="switchScreen('screenLanding')"><i class="fa-solid fa-arrow-left-long"></i> Return to Gateway</a>
+            </div>
+        </div>
+
+        <div id="screenDashboard" class="hidden">
+            <div class="account-card">
+                <div class="acc-profile">
+                    <div>
+                        <div class="acc-name" id="userDisplayName">User Profile</div>
+                        <div class="acc-number" id="userDisplayAccNo">ACC: #RLSB0000</div>
+                    </div>
+                    <div class="chip-icon"></div>
+                </div>
+                <div>
+                    <div class="balance-label">Total Liquid Capital Balance</div>
+                    <div class="balance-amount" id="userDisplayBalance">$0.00</div>
+                </div>
+            </div>
+
+            <div class="actions-grid">
+                <div class="action-btn" onclick="openTransactionModal('deposit')">
+                    <div class="icon-box" style="color: var(--success);"><i class="fa-solid fa-circle-arrow-down"></i></div>
+                    <span>Deposit</span>
+                </div>
+                <div class="action-btn" onclick="openTransactionModal('withdraw')">
+                    <div class="icon-box" style="color: var(--primary);"><i class="fa-solid fa-circle-arrow-up"></i></div>
+                    <span>Withdraw</span>
+                </div>
+                <div class="action-btn" onclick="openTransactionModal('transfer')">
+                    <div class="icon-box" style="color: #60A5FA;"><i class="fa-solid fa-money-bill-transfer"></i></div>
+                    <span>Transfer</span>
+                </div>
+                <div class="action-btn" onclick="handleLogout()">
+                    <div class="icon-box" style="color: var(--text-gray);"><i class="fa-solid fa-power-off"></i></div>
+                    <span>Logout</span>
+                </div>
+            </div>
+
+            <div id="transactionPanel" class="hidden">
+                <h4 id="panelTitle" style="margin-bottom: 14px; font-size: 0.9rem; font-weight:700; text-transform:uppercase; color: var(--accent);">Operational Protocol</h4>
+                <form id="actionForm" onsubmit="executeTransaction(event)">
+                    <input type="hidden" id="actionType">
+                    <div class="form-group" id="targetAccGroup">
+                        <label id="panelTargetLabel">Destination Routing Node (Acc No.)</label>
+                        <input type="text" id="actionTarget" placeholder="e.g. RLSB7890">
+                    </div>
+                    <div class="form-group">
+                        <label>Asset Transfer Amount ($)</label>
+                        <input type="number" id="actionAmount" min="1" step="any" placeholder="0.00" required>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" class="btn btn-primary" style="padding: 10px; font-size:0.85rem;">Authorize</button>
+                        <button type="button" class="btn btn-outline" style="margin: 0; padding: 10px; font-size:0.85rem;" onclick="closeTransactionPanel()">Abort</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="history-section">
+                <div class="section-title">
+                    <span>Audit Trail Ledger Statements</span>
+                    <i class="fa-solid fa-receipt" style="color: var(--text-gray); font-size:0.85rem;"></i>
+                </div>
+                <div class="transaction-list" id="historyList">
+                    </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Local Browser Instance Database System Mock Storage Data Layer 
+        let users = JSON.parse(localStorage.getItem('rlsb_users_v2')) || {
+            'demo': {
+                name: 'Jane Smith',
+                username: 'demo',
+                password: 'password',
+                accNo: 'RLSB7890',
+                balance: 14250.00,
+                history: [
+                    { type: 'deposit', amount: 14250, details: 'Verified Core Treasury Capital Asset Opening', date: '2026-06-01 09:12' }
+                ]
+            }
+        };
+
+        let currentUser = null;
+
+        // Routing Engine Screens Controls Transitions
+        function switchScreen(screenId) {
+            document.getElementById('screenLanding').classList.add('hidden');
+            document.getElementById('screenSignup').classList.add('hidden');
+            document.getElementById('screenLogin').classList.add('hidden');
+            document.getElementById('screenDashboard').classList.add('hidden');
+
+            document.getElementById(screenId).classList.remove('hidden');
+            closeTransactionPanel();
+            hideAlert();
+        }
+
+        // Notification Alerts Module
+        function showAlert(msg, isSuccess = false) {
+            const alertBox = document.getElementById('alertBox');
+            alertBox.className = `alert ${isSuccess ? 'alert-success' : 'alert-error'}`;
+            alertBox.innerHTML = `<i class="fa-solid ${isSuccess ? 'fa-circle-check' : 'fa-circle-exclamation'}"></i> <span>${msg}</span>`;
+            alertBox.classList.remove('hidden');
+            // Auto scroll container header upward to highlight toasts notifications context
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function hideAlert() {
+            document.getElementById('alertBox').classList.add('hidden');
+        }
+
+        // SignUp System Validation Handling
+        function handleSignup(e) {
+            e.preventDefault();
+            const name = document.getElementById('signupName').value.trim();
+            const user = document.getElementById('signupUser').value.trim().toLowerCase();
+            const pass = document.getElementById('signupPass').value;
+            const deposit = parseFloat(document.getElementById('signupDeposit').value);
+
+            if (users[user]) {
+                showAlert('Assigned variant alphanumeric ID registration matches active identity.');
+                return;
+            }
+
+            const accNo = 'RLSB' + Math.floor(1000 + Math.random() * 9000);
+            
+            users[user] = {
+                name: name,
+                username: user,
+                password: pass,
+                accNo: accNo,
+                balance: deposit,
+                history: [{ type: 'deposit', amount: deposit, details: 'Authorized Initial Account Setup Allocation', date: getTimestamp() }]
+            };
+
+            saveDatabase();
+            document.getElementById('signupForm').reset();
+            showAlert('Vault access generated! Access node terminal below.', true);
+            switchScreen('screenLogin');
+        }
+
+        // Core Login Framework Processing Identity Signatures
+        function handleLogin(e) {
+            e.preventDefault();
+            const user = document.getElementById('loginUser').value.trim().toLowerCase();
+            const pass = document.getElementById('loginPass').value;
+
+            if (users[user] && users[user].password === pass) {
+                currentUser = users[user];
+                document.getElementById('loginForm').reset();
+                updateDashboard();
+                switchScreen('screenDashboard');
+                showAlert(`Welcome to Premium Vault System, ${currentUser.name}!`, true);
+            } else {
+                showAlert('Signature verification mismatch. Secure node input validation rejected.');
+            }
+        }
+
+        // Live Dashboard Dynamic Content Framework Renderer Engine
+        function updateDashboard() {
+            document.getElementById('userDisplayName').innerText = currentUser.name;
+            document.getElementById('userDisplayAccNo').innerText = `ACC: #${currentUser.accNo}`;
+            document.getElementById('userDisplayBalance').innerText = `$${currentUser.balance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            list.innerHTML = '';
+
+            if (currentUser.history.length === 0) {
+                list.innerHTML = '<p style="text-align:center; color:var(--text-gray); font-size:0.8rem; padding:16px;">Zero structured operational ledgers found.</p>';
+                return;
+            }
+
+            [...currentUser.history].reverse().forEach(tx => {
+                const item = document.createElement('div');
+                item.className = `transaction-item tx-${tx.type}`;
+                
+                let icon = 'fa-circle-arrow-down';
+                let prefix = '+';
+                if(tx.type === 'withdraw') { icon = 'fa-circle-arrow-up'; prefix = '-'; }
+                if(tx.type === 'transfer') { icon = 'fa-right-left'; prefix = '-'; }
+
+                item.innerHTML = `
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <i class="fa-solid ${icon}" style="opacity:0.5; font-size:1.1rem;"></i>
+                        <div class="tx-info">
+                            <h4>${tx.details}</h4>
+                            <p>${tx.date}</p>
+                        </div>
+                    </div>
+                    <div class="tx-amount">${prefix}$${tx.amount.toLocaleString('en-US', {minimumFractionDigits: 2})}</div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        // Functional Contextual Forms System Operational Interlocks
+        function openTransactionModal(type) {
+            const panel = document.getElementById('transactionPanel');
+            const title = document.getElementById('panelTitle');
+            const targetGroup = document.getElementById('targetAccGroup');
+            
+            document.getElementById('actionForm').reset();
+            document.getElementById('actionType').value = type;
+            panel.classList.remove('hidden');
+
+            if (type === 'deposit') {
+                title.innerText = "Internal Asset Liquidity Credit";
+                targetGroup.classList.add('hidden');
+                document.getElementById('actionTarget').removeAttribute('required');
+            } else if (type === 'withdraw') {
+                title.innerText = "Vault Liquidation External Outbound";
+                targetGroup.classList.add('hidden');
+                document.getElementById('actionTarget').removeAttribute('required');
+            } else if (type === 'transfer') {
+                title.innerText = "Interbank Node Wire Remittance Routing";
+                targetGroup.classList.remove('hidden');
+                document.getElementById('actionTarget').setAttribute('required', 'true');
+            }
+        }
+
+        function closeTransactionPanel() {
+            document.getElementById('transactionPanel').classList.add('hidden');
+        }
+
+        // Central Ledger System Engine Execution Subroutines (Double Entry Framework Verification)
+        function executeTransaction(e) {
+            e.preventDefault();
+            const type = document.getElementById('actionType').value;
+            const amount = parseFloat(document.getElementById('actionAmount').value);
+            const targetAcc = document.getElementById('actionTarget').value.trim().toUpperCase();
+
+            if (isNaN(amount) || amount <= 0) {
+                showAlert('Transaction metrics values entered cannot be processed.');
+                return;
+            }
+
+            if (type === 'deposit') {
+                currentUser.balance += amount;
+                currentUser.history.push({
+                    type: 'deposit',
+                    amount: amount,
+                    details: 'Direct Local Cash Desk Inbound',
+                    date: getTimestamp()
+                });
+                showAlert(`Successfully credited $${amount.toFixed(2)} to ledger.`, true);
+
+            } else if (type === 'withdraw') {
+                if (amount > currentUser.balance) {
+                    showAlert('Asset ledger thresholds mismatch. Request exceeds structural capability.');
+                    return;
+                }
+                currentUser.balance -= amount;
+                currentUser.history.push({
+                    type: 'withdraw',
+                    amount: amount,
+                    details: 'Secure Terminal Liquidation Outbound',
+                    date: getTimestamp()
+                });
+                showAlert(`Successfully liquidated $${amount.toFixed(2)} out of active vault pools.`, true);
+
+            } else if (type === 'transfer') {
+                if (amount > currentUser.balance) {
+                    showAlert('Insufficient balances inside targeted cross-pool structure allocation.');
+                    return;
+                }
+                if (targetAcc === currentUser.accNo) {
+                    showAlert('Self-referencing loop wire commands are natively disabled.');
+                    return;
+                }
+
+                let recipientKey = null;
+                for (let u in users) {
+                    if (users[u].accNo === targetAcc) {
+                        recipientKey = u;
+                        break;
+                    }
+                }
+
+                if (!recipientKey) {
+                    showAlert(`Routing path confirmation error. Node identifier ${targetAcc} not tracked.`);
+                    return;
+                }
+
+                // Complete Double Entry Asset Ledger Update Cycles
+                currentUser.balance -= amount;
+                currentUser.history.push({
+                    type: 'transfer',
+                    amount: amount,
+                    details: `Wire Remittance to: ${users[recipientKey].name} (#${targetAcc})`,
+                    date: getTimestamp()
+                });
+
+                users[recipientKey].balance += amount;
+                users[recipientKey].history.push({
+                    type: 'deposit',
+                    amount: amount,
+                    details: `Wire Settlement from: ${currentUser.name} (#${currentUser.accNo})`,
+                    date: getTimestamp()
+                });
+
+                showAlert(`Remittance sequence for $${amount.toFixed(2)} processed to ${targetAcc} successfully.`, true);
+            }
+
+            saveDatabase();
+            updateDashboard();
+            closeTransactionPanel();
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            switchScreen('screenLanding');
+            showAlert('Secure node tunnel authorization closed successfully.', true);
+        }
+
+        // Storage Data Persistency & Timestamp Processing Helpers
+        function saveDatabase() {
+            localStorage.setItem('rlsb_users_v2', JSON.stringify(users));
+        }
+
+        function getTimestamp() {
+            const now = new Date();
+            return now.toISOString().replace('T', ' ').substring(0, 16);
+        }
+    </script>
+</body>
+</html>
