@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Product Development — Rancho Labs, IIT</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Cinzel:wght@400;600;700&family=Exo+2:ital,wght@0,200;0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #020510;
+  --navy:     #060e24;
+  --card:     rgba(6,20,55,0.55);
+  --border:   rgba(0,200,255,0.15);
+  --glow:     rgba(0,200,255,0.25);
+  --cyan:     #00cfff;
+  --violet:   #8b5cf6;
+  --green:    #00f5a0;
+  --gold:     #fbbf24;
+  --pink:     #f472b6;
+  --text:     #dceeff;
+  --muted:    #6080a0;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;overflow-x:hidden}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:#010308}
+::-webkit-scrollbar-thumb{background:rgba(0,207,255,0.3);border-radius:3px}
+
+/* ── CANVAS ── */
+#space-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+
+/* ── HERO ── */
+#hero{
+  position:relative;z-index:1;
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;padding:20px;
+}
+.hero-badge{
+  display:inline-block;
+  font-family:'Exo 2',sans-serif;font-size:11px;font-weight:500;
+  letter-spacing:4px;text-transform:uppercase;color:var(--cyan);
+  border:1px solid rgba(0,207,255,0.3);border-radius:30px;
+  padding:6px 20px;margin-bottom:28px;
+  background:rgba(0,207,255,0.05);
+  animation:fadeUp .8s ease both;
+}
+.hero-title{
+  font-family:'Orbitron',sans-serif;
+  font-size:clamp(32px,6vw,76px);
+  font-weight:900;
+  line-height:1.05;
+  letter-spacing:2px;
+  background:linear-gradient(135deg,#fff 30%,var(--cyan) 70%,#a78bfa);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  animation:fadeUp .8s .15s ease both;
+  text-shadow:none;
+}
+.hero-at{
+  font-family:'Exo 2',sans-serif;font-weight:200;font-style:italic;
+  font-size:clamp(16px,2.5vw,26px);color:var(--muted);
+  letter-spacing:3px;margin:12px 0;
+  animation:fadeUp .8s .28s ease both;
+}
+.hero-institute{
+  font-family:'Orbitron',sans-serif;
+  font-size:clamp(20px,3.5vw,46px);
+  font-weight:700;
+  background:linear-gradient(90deg,var(--violet),#c084fc,var(--cyan));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  letter-spacing:3px;
+  animation:fadeUp .8s .4s ease both;
+}
+.hero-line{
+  width:120px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+  margin:32px auto;
+  animation:fadeUp .8s .5s ease both;
+}
+.scroll-hint{
+  position:absolute;bottom:36px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  color:var(--muted);font-size:11px;letter-spacing:3px;text-transform:uppercase;
+  animation:fadeIn 1.5s 1.5s ease both;
+}
+.scroll-arrow{
+  width:22px;height:22px;
+  border-right:2px solid rgba(0,207,255,0.4);
+  border-bottom:2px solid rgba(0,207,255,0.4);
+  transform:rotate(45deg);
+  animation:scrollBounce 1.8s infinite;
+}
+@keyframes scrollBounce{0%,100%{transform:rotate(45deg) translateY(0)}50%{transform:rotate(45deg) translateY(8px)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+/* ── SHARED SECTION STYLES ── */
+section{position:relative;z-index:1}
+.section-inner{max-width:1100px;margin:0 auto;padding:100px 32px}
+.section-label{
+  font-family:'Exo 2',sans-serif;font-size:10px;font-weight:500;letter-spacing:5px;
+  text-transform:uppercase;color:var(--cyan);margin-bottom:10px;
+}
+.section-title{
+  font-family:'Orbitron',sans-serif;font-size:clamp(24px,4vw,42px);
+  font-weight:700;color:#fff;line-height:1.15;margin-bottom:12px;
+}
+.section-title span{
+  background:linear-gradient(90deg,var(--cyan),var(--violet));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.section-line{
+  width:60px;height:2px;
+  background:linear-gradient(90deg,var(--cyan),var(--violet));
+  margin-bottom:48px;border-radius:2px;
+}
+
+/* ── REVEAL ── */
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .9s cubic-bezier(.22,1,.36,1),transform .9s cubic-bezier(.22,1,.36,1)}
+.reveal.in{opacity:1;transform:translateY(0)}
+.reveal-d1{transition-delay:.1s}.reveal-d2{transition-delay:.2s}.reveal-d3{transition-delay:.3s}
+
+/* ── ABOUT SECTION ── */
+#about{background:linear-gradient(180deg,#02050f 0%,#060e24 50%,#02050f 100%)}
+#about::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 80% 50%,rgba(139,92,246,.08) 0%,transparent 60%);
+  pointer-events:none;
+}
+.about-grid{display:grid;grid-template-columns:300px 1fr;gap:40px;align-items:start}
+@media(max-width:820px){.about-grid{grid-template-columns:1fr}}
+
+.profile-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:36px 28px;
+  text-align:center;
+  backdrop-filter:blur(12px);
+  box-shadow:0 0 40px rgba(0,207,255,.05);
+  position:relative;overflow:hidden;
+}
+.profile-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+}
+.avatar-ring{
+  width:110px;height:110px;border-radius:50%;
+  background:conic-gradient(var(--cyan),var(--violet),var(--cyan));
+  margin:0 auto 20px;
+  display:flex;align-items:center;justify-content:center;
+  padding:3px;
+}
+.avatar-inner{
+  width:100%;height:100%;border-radius:50%;
+  background:linear-gradient(135deg,#0a1535,#06102a);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Orbitron',sans-serif;font-size:24px;font-weight:700;
+  color:var(--cyan);letter-spacing:2px;
+}
+.profile-name{
+  font-family:'Cinzel',serif;font-size:20px;font-weight:600;
+  color:#fff;letter-spacing:2px;line-height:1.3;margin-bottom:6px;
+}
+.profile-school{
+  font-size:12px;font-weight:300;color:var(--muted);
+  letter-spacing:1px;margin-bottom:20px;line-height:1.6;
+}
+.subject-tags{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-bottom:20px}
+.tag{
+  font-size:10px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;
+  padding:4px 12px;border-radius:20px;
+}
+.tag-ph{background:rgba(0,207,255,.12);color:var(--cyan);border:1px solid rgba(0,207,255,.25)}
+.tag-ch{background:rgba(0,245,160,.1);color:var(--green);border:1px solid rgba(0,245,160,.25)}
+.tag-cs{background:rgba(139,92,246,.12);color:#a78bfa;border:1px solid rgba(139,92,246,.25)}
+.tag-ma{background:rgba(251,191,36,.1);color:var(--gold);border:1px solid rgba(251,191,36,.25)}
+.class-badge{
+  display:inline-block;
+  font-family:'Orbitron',sans-serif;font-size:11px;font-weight:600;letter-spacing:3px;
+  color:#fff;background:linear-gradient(135deg,rgba(0,207,255,.15),rgba(139,92,246,.15));
+  border:1px solid rgba(0,207,255,.2);border-radius:8px;padding:8px 18px;
+}
+
+.bio-card{padding:0}
+.bio-text{
+  font-size:15.5px;font-weight:300;line-height:1.9;color:rgba(220,238,255,.8);
+  margin-bottom:36px;
+}
+.bio-text em{color:var(--cyan);font-style:normal;font-weight:500}
+.stats-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:32px}
+@media(max-width:600px){.stats-row{grid-template-columns:1fr}}
+.stat-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:20px;backdrop-filter:blur(8px);
+  position:relative;overflow:hidden;
+}
+.stat-card::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+}
+.stat-gold::after{background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.stat-cyan::after{background:linear-gradient(90deg,transparent,var(--cyan),transparent)}
+.stat-num{
+  font-family:'Orbitron',sans-serif;font-size:36px;font-weight:700;
+  line-height:1;margin-bottom:6px;
+}
+.stat-gold .stat-num{color:var(--gold)}
+.stat-cyan .stat-num{color:var(--cyan)}
+.stat-label{font-size:11px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.stat-sub{font-size:12px;color:rgba(100,140,180,.7);margin-top:4px}
+
+/* ── CURRICULUM ── */
+#curriculum{background:linear-gradient(180deg,#02050f 0%,#04091c 100%)}
+.day-tabs{
+  display:flex;gap:10px;flex-wrap:wrap;margin-bottom:40px;
+}
+.day-tab{
+  font-family:'Orbitron',sans-serif;font-size:11px;font-weight:600;
+  letter-spacing:2px;padding:9px 20px;border-radius:30px;cursor:pointer;
+  border:1px solid rgba(0,207,255,.2);background:transparent;color:var(--muted);
+  transition:all .25s ease;white-space:nowrap;
+}
+.day-tab:hover{color:var(--cyan);border-color:rgba(0,207,255,.5)}
+.day-tab.active{background:rgba(0,207,255,.1);color:var(--cyan);border-color:var(--cyan);box-shadow:0 0 16px rgba(0,207,255,.15)}
+
+.mindmap-wrap{
+  background:rgba(4,9,28,.7);border:1px solid var(--border);
+  border-radius:20px;padding:20px;backdrop-filter:blur(10px);
+  position:relative;overflow:hidden;
+}
+.mindmap-wrap::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 50%,rgba(0,207,255,.04) 0%,transparent 70%);
+  pointer-events:none;
+}
+#mindmap-svg{width:100%;display:block;cursor:default}
+.mindmap-hint{
+  text-align:center;font-size:12px;letter-spacing:2px;text-transform:uppercase;
+  color:rgba(96,128,160,.6);margin-top:12px;
+}
+
+/* ── TOOLTIP ── */
+#mm-tooltip{
+  position:fixed;
+  background:rgba(2,6,20,.97);
+  border:1px solid rgba(0,207,255,.4);
+  border-radius:14px;padding:14px 18px;
+  max-width:270px;min-width:200px;
+  pointer-events:none;z-index:9999;
+  opacity:0;transform:translateY(6px) scale(.97);
+  transition:opacity .18s ease,transform .18s ease;
+  box-shadow:0 8px 32px rgba(0,0,0,.7),0 0 20px rgba(0,207,255,.12);
+}
+#mm-tooltip.show{opacity:1;transform:translateY(0) scale(1)}
+.tt-title{
+  font-family:'Orbitron',sans-serif;font-size:11px;font-weight:600;
+  letter-spacing:2px;margin-bottom:8px;
+}
+.tt-desc{font-size:12.5px;line-height:1.7;color:rgba(200,225,255,.8);font-weight:300}
+
+/* ── SVG MIND MAP STYLES ── */
+.mm-node{cursor:pointer}
+.mm-circle{transition:r .2s ease,filter .2s ease}
+.mm-node:hover .mm-circle{filter:brightness(1.4)}
+.mm-inner-g{transition:transform .25s cubic-bezier(.22,1,.36,1);transform-box:fill-box;transform-origin:center}
+.mm-node:hover .mm-inner-g{transform:scale(1.2)}
+.mm-line{transition:opacity .2s}
+.mm-node:hover~.mm-line{opacity:.8}
+
+/* ── CONTACT ── */
+#contact{background:#000;padding:0}
+.contact-inner{max-width:800px;margin:0 auto;padding:100px 32px;text-align:center}
+.contact-title{
+  font-family:'Orbitron',sans-serif;font-size:clamp(18px,3vw,28px);
+  font-weight:700;color:#fff;letter-spacing:4px;text-transform:uppercase;
+  margin-bottom:48px;
+}
+.contact-title span{
+  display:inline-block;width:60px;height:2px;
+  background:linear-gradient(90deg,transparent,#fff);
+  vertical-align:middle;margin:0 16px 4px;
+}
+.contact-items{display:flex;flex-direction:column;gap:24px;margin-bottom:48px}
+.contact-row{
+  display:flex;align-items:center;justify-content:center;gap:16px;
+  flex-wrap:wrap;
+}
+.contact-icon{
+  width:44px;height:44px;border-radius:12px;
+  border:1px solid rgba(255,255,255,.15);
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.04);flex-shrink:0;
+}
+.contact-icon svg{width:20px;height:20px;stroke:#fff;stroke-width:1.5;fill:none}
+.contact-val{
+  font-family:'Exo 2',sans-serif;font-size:17px;font-weight:300;
+  color:rgba(255,255,255,.85);letter-spacing:1px;
+}
+.contact-val a{color:inherit;text-decoration:none;transition:color .2s}
+.contact-val a:hover{color:var(--cyan)}
+.contact-funny{
+  max-width:520px;margin:0 auto 0;
+  font-size:14px;font-weight:300;font-style:italic;
+  color:rgba(255,255,255,.35);line-height:1.8;letter-spacing:.5px;
+  border-top:1px solid rgba(255,255,255,.06);padding-top:32px;
+}
+.contact-funny strong{color:rgba(255,255,255,.55);font-style:normal}
+
+/* ── PEOPLE ── */
+#people{background:linear-gradient(180deg,#040812 0%,#020510 100%);padding:0}
+.people-inner{max-width:1100px;margin:0 auto;padding:100px 32px}
+
+.carousel-container{
+  position:relative;height:420px;
+  display:flex;align-items:center;justify-content:center;
+  perspective:1400px;
+  margin-top:20px;
+}
+.person-card{
+  position:absolute;
+  width:260px;
+  background:rgba(6,14,36,.8);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:24px;
+  padding:36px 28px;
+  text-align:center;
+  backdrop-filter:blur(14px);
+  transition:all .55s cubic-bezier(.22,1,.36,1);
+  user-select:none;
+}
+.person-card.pos-active{
+  transform:translateX(0) rotateY(0) scale(1);
+  opacity:1;z-index:5;
+  border-color:rgba(0,207,255,.25);
+  box-shadow:0 0 60px rgba(0,207,255,.08),0 20px 50px rgba(0,0,0,.5);
+}
+.person-card.pos-prev{
+  transform:translateX(-310px) rotateY(22deg) scale(.82);
+  opacity:.45;z-index:3;filter:blur(1.5px);
+}
+.person-card.pos-next{
+  transform:translateX(310px) rotateY(-22deg) scale(.82);
+  opacity:.45;z-index:3;filter:blur(1.5px);
+}
+.person-card.pos-far-left{
+  transform:translateX(-580px) rotateY(35deg) scale(.65);
+  opacity:0;z-index:1;
+}
+.person-card.pos-far-right{
+  transform:translateX(580px) rotateY(-35deg) scale(.65);
+  opacity:0;z-index:1;
+}
+
+.person-avatar{
+  width:100px;height:100px;border-radius:50%;
+  margin:0 auto 22px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Orbitron',sans-serif;font-size:26px;font-weight:700;
+  position:relative;
+}
+.person-avatar::before{
+  content:'';position:absolute;inset:-3px;border-radius:50%;
+  background:conic-gradient(var(--av-color, var(--cyan)),transparent 60%,var(--av-color, var(--cyan)));
+  animation:spinRing 6s linear infinite;z-index:-1;
+}
+@keyframes spinRing{to{transform:rotate(360deg)}}
+.person-name{
+  font-family:'Cinzel',serif;font-size:18px;font-weight:600;
+  color:#fff;letter-spacing:2px;margin-bottom:6px;
+}
+.person-type{
+  font-size:10px;font-weight:500;letter-spacing:3px;text-transform:uppercase;
+  color:var(--muted);margin-bottom:8px;
+}
+.person-role{
+  font-size:14px;font-weight:300;font-style:italic;
+  color:var(--av-color, var(--cyan));letter-spacing:.5px;
+}
+
+.carousel-nav{
+  display:flex;align-items:center;justify-content:center;gap:24px;
+  margin-top:52px;
+}
+.nav-btn{
+  width:48px;height:48px;border-radius:50%;
+  border:1.5px solid rgba(0,207,255,.3);
+  background:rgba(0,207,255,.05);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .2s;
+}
+.nav-btn:hover{background:rgba(0,207,255,.12);border-color:var(--cyan);box-shadow:0 0 14px rgba(0,207,255,.2)}
+.nav-btn svg{width:20px;height:20px;stroke:var(--cyan);stroke-width:2;fill:none}
+.nav-dots{display:flex;gap:10px;align-items:center}
+.nav-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:rgba(0,207,255,.2);border:1px solid rgba(0,207,255,.3);
+  cursor:pointer;transition:all .3s;
+}
+.nav-dot.active{background:var(--cyan);box-shadow:0 0 8px rgba(0,207,255,.5);width:24px;border-radius:4px}
+
+/* ── FOOTER BAR ── */
+.footer-bar{
+  background:#000;text-align:center;
+  padding:24px 20px;
+  font-size:12px;letter-spacing:2px;text-transform:uppercase;
+  color:rgba(255,255,255,.15);border-top:1px solid rgba(255,255,255,.06);
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  .section-inner,.people-inner{padding:70px 20px}
+  .carousel-container{height:360px}
+  .person-card{width:220px;padding:28px 20px}
+  .person-card.pos-prev{transform:translateX(-250px) rotateY(20deg) scale(.78);opacity:.3}
+  .person-card.pos-next{transform:translateX(250px) rotateY(-20deg) scale(.78);opacity:.3}
+}
+</style>
+</head>
+<body>
+
+<canvas id="space-canvas"></canvas>
+
+<!-- ══════════════════════════════ HERO ══════════════════════════════ -->
+<section id="hero">
+  <div class="hero-badge">✦ Student Portfolio ✦</div>
+  <h1 class="hero-title">AI Product Development</h1>
+  <div class="hero-at">at</div>
+  <div class="hero-institute">Rancho Labs, IIT</div>
+  <div class="hero-line"></div>
+  <div class="scroll-hint">
+    <span>Scroll to explore</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ ABOUT ══════════════════════════════ -->
+<section id="about">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-label">Who am I</div>
+      <h2 class="section-title">Meet the <span>Student</span></h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="about-grid">
+      <div class="profile-card reveal reveal-d1">
+        <div class="avatar-ring">
+          <div class="avatar-inner">NAR</div>
+        </div>
+        <div class="profile-name">Nathan A.<br>Rodricks</div>
+        <div class="profile-school">Don Bosco School, Alaknanda<br>New Delhi</div>
+        <div class="subject-tags">
+          <span class="tag tag-ph">Physics</span>
+          <span class="tag tag-ch">Chemistry</span>
+          <span class="tag tag-cs">Comp. Sci</span>
+          <span class="tag tag-ma">Maths</span>
+        </div>
+        <div class="class-badge">CLASS XI · PCM + CS</div>
+      </div>
+
+      <div class="bio-card reveal reveal-d2">
+        <p class="bio-text">
+          Nathan A. Rodricks is a remarkably driven student in Class XI at Don Bosco School, Alaknanda — the kind of learner who makes teachers look forward to class. Having secured an impressive <em>91% in his Class X CBSE Board Examinations</em> and claiming the title of <em>School Topper in English</em>, Nathan pairs sharp analytical thinking with an unusual flair for language and communication. Equally at home in a Chemistry lab or debugging Python code, he brings an infectious curiosity to whatever he tackles — be it the laws of thermodynamics or the mathematics behind neural networks. Now diving headfirst into AI Product Development at Rancho Labs, IIT, Nathan is turning classroom learning into real-world innovation, one model at a time.
+        </p>
+        <div class="stats-row">
+          <div class="stat-card stat-gold">
+            <div class="stat-num">91%</div>
+            <div class="stat-label">CBSE Class X Boards</div>
+            <div class="stat-sub">Overall Aggregate · 2024</div>
+          </div>
+          <div class="stat-card stat-cyan">
+            <div class="stat-num">🥇</div>
+            <div class="stat-label">English School Topper</div>
+            <div class="stat-sub">Don Bosco School, Alaknanda</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ CURRICULUM ══════════════════════════════ -->
+<section id="curriculum">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-label">Knowledge Maps</div>
+      <h2 class="section-title">The Daily <span>Curriculum</span></h2>
+      <div class="section-line"></div>
+      <div style="font-size:14px;color:var(--muted);margin-bottom:32px;font-weight:300">
+        Select a day to explore its knowledge map. <em style="color:rgba(0,207,255,.6)">Hover over any node</em> for a deeper explanation.
+      </div>
+    </div>
+
+    <div class="day-tabs reveal reveal-d1" id="day-tabs"></div>
+
+    <div class="mindmap-wrap reveal reveal-d2">
+      <svg id="mindmap-svg" viewBox="0 0 860 580" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div class="mindmap-hint">Hover over nodes to expand</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ CONTACT ══════════════════════════════ -->
+<section id="contact">
+  <div class="contact-inner">
+    <div class="contact-title reveal"><span></span>How to reach out to me<span></span></div>
+
+    <div class="contact-items">
+      <div class="contact-row reveal reveal-d1">
+        <div class="contact-icon">
+          <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 12 19.79 19.79 0 01.03 3.18 2 2 0 012 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        </div>
+        <div class="contact-val">+91 85950 28242</div>
+      </div>
+      <div class="contact-row reveal reveal-d2">
+        <div class="contact-icon">
+          <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </div>
+        <div class="contact-val"><a href="mailto:rodricksnathan26@gmail.com">rodricksnathan26@gmail.com</a></div>
+      </div>
+    </div>
+
+    <div class="contact-funny reveal reveal-d3">
+      🏠 <strong>You can also find me at home</strong> — it's a real place, I promise. Just ring the bell (it works, unlike my sleep schedule), arrive between 4–5pm on a non-exam day, and pray I haven't gone on a spontaneous deep-dive into neural networks. <em>Snacks recommended. Biryani preferred. Results not guaranteed.</em>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ PEOPLE ══════════════════════════════ -->
+<section id="people">
+  <div class="people-inner">
+    <div class="reveal" style="text-align:center;margin-bottom:0">
+      <div class="section-label" style="justify-content:center;display:flex">The Squad</div>
+      <h2 class="section-title" style="text-align:center">Minds Behind the <span>Journey</span></h2>
+      <div class="section-line" style="margin:12px auto 0"></div>
+    </div>
+
+    <div class="carousel-container reveal reveal-d1" id="carousel"></div>
+
+    <div class="carousel-nav">
+      <button class="nav-btn" id="prev-btn" aria-label="Previous">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="nav-dots" id="nav-dots"></div>
+      <button class="nav-btn" id="next-btn" aria-label="Next">
+        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+<div class="footer-bar">© 2025 Nathan A. Rodricks · AI Product Development · Rancho Labs, IIT</div>
+
+<div id="mm-tooltip">
+  <div class="tt-title" id="tt-title"></div>
+  <div class="tt-desc" id="tt-desc"></div>
+</div>
+
+<!-- ════════════════════ JAVASCRIPT ════════════════════ -->
+<script>
+/* ──────────────────────────── SPACE CANVAS ──────────────────────────── */
+(function(){
+  const canvas = document.getElementById('space-canvas');
+  const ctx    = canvas.getContext('2d');
+  let W, H, stars=[], shooters=[], shootTimer=0;
+
+  const NEBULAE=[
+    {rx:.18,ry:.3,r:.28,col:[60,0,140]},
+    {rx:.78,ry:.55,r:.22,col:[0,50,120]},
+    {rx:.5, ry:.12,r:.18,col:[0,100,80]},
+    {rx:.3, ry:.8, r:.16,col:[100,20,120]},
+  ];
+
+  function resize(){
+    W=canvas.width=window.innerWidth;
+    H=canvas.height=window.innerHeight;
+    stars=[];
+    for(let i=0;i<320;i++) stars.push({
+      px:Math.random(),py:Math.random(),
+      r:Math.random()*1.8+.3,
+      a:Math.random()*.75+.25,
+      tw:Math.random()*.018+.004,
+      ph:Math.random()*Math.PI*2
+    });
+  }
+
+  function spawnShooter(){
+    const fromRight=Math.random()<.5;
+    shooters.push({
+      x:fromRight?.98:.02,y:Math.random()*.45+.02,
+      vx:(fromRight?-.0028:.0028)*(1+Math.random()),
+      vy:.0012+Math.random()*.0012,
+      life:0,maxLife:1.4+Math.random()*.8,a:1
+    });
+  }
+
+  let last=0;
+  function frame(ts){
+    const dt=Math.min((ts-last)/1000,.05);last=ts;
+    ctx.clearRect(0,0,W,H);
+
+    // nebulae
+    NEBULAE.forEach(n=>{
+      const g=ctx.createRadialGradient(n.rx*W,n.ry*H,0,n.rx*W,n.ry*H,n.r*Math.min(W,H));
+      g.addColorStop(0,`rgba(${n.col.join(',')},0.1)`);
+      g.addColorStop(1,`rgba(${n.col.join(',')},0)`);
+      ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    });
+
+    // stars
+    stars.forEach(s=>{
+      s.ph+=s.tw;
+      const alpha=s.a*(.55+.45*Math.sin(s.ph));
+      ctx.beginPath();
+      ctx.arc(s.px*W,s.py*H,s.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(255,255,255,${alpha})`;
+      ctx.fill();
+    });
+
+    // shooting stars
+    shootTimer-=dt;
+    if(shootTimer<=0){spawnShooter();shootTimer=2.5+Math.random()*5;}
+    for(let i=shooters.length-1;i>=0;i--){
+      const s=shooters[i];
+      s.life+=dt; s.a=Math.max(0,1-s.life/s.maxLife);
+      if(s.a<=0){shooters.splice(i,1);continue;}
+      const tx=s.x*W, ty=s.y*H, len=65;
+      const g=ctx.createLinearGradient(tx,ty,tx-s.vx*len/Math.abs(s.vx)*len,ty-s.vy*len/Math.abs(s.vy)*len);
+      g.addColorStop(0,`rgba(255,255,255,${s.a})`);
+      g.addColorStop(.4,`rgba(150,200,255,${s.a*.5})`);
+      g.addColorStop(1,`rgba(150,200,255,0)`);
+      ctx.beginPath();
+      ctx.moveTo(tx,ty);
+      ctx.lineTo(tx-s.vx*len/.003,ty-s.vy*len/.003);
+      ctx.strokeStyle=g; ctx.lineWidth=1.5; ctx.stroke();
+      s.x+=s.vx; s.y+=s.vy;
+    }
+    requestAnimationFrame(frame);
+  }
+
+  window.addEventListener('resize',resize);
+  resize();
+  requestAnimationFrame(frame);
+})();
+
+/* ──────────────────────────── SCROLL REVEAL ──────────────────────────── */
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')});
+},{threshold:.08});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+/* ──────────────────────────── CURRICULUM DATA ──────────────────────────── */
+const DAYS=[
+  {
+    title:"Day 1",
+    short:"AI Orientation",
+    color:"#00cfff",
+    nodes:[
+      {label:"What Is AI",            desc:"Artificial Intelligence is the science of creating machines that simulate human reasoning, perception, and decision-making. It spans rule-based systems all the way to self-learning deep neural networks that outperform humans on specific tasks."},
+      {label:"Types Of AI",           desc:"Narrow AI (like Siri) excels at one task. General AI would match human-level reasoning across all domains — still theoretical. Superintelligent AI would surpass human intellect entirely. Today we live in the era of Narrow AI."},
+      {label:"Machine Learning Intro",desc:"ML is the subset of AI where machines learn from data without explicit programming. Instead of hand-coding rules, we feed algorithms thousands of examples and let them discover patterns. It's the engine behind most modern AI products."},
+      {label:"Neural Network Basics", desc:"Inspired by biological neurons, artificial neural networks chain layers of mathematical nodes. Data flows forward through the network, producing predictions. Training adjusts internal weights until predictions are accurate."},
+      {label:"Data Fuels AI",         desc:"Data is the raw material of AI. More high-quality, diverse data means better-trained models. Data collection, labeling, and cleaning often consume 80% of a real AI project's time — yet data work is rarely glamorous."},
+      {label:"Algorithms & Logic",    desc:"An algorithm is a precise set of instructions. In AI, learning algorithms adjust millions of internal parameters by minimising a mathematical error signal, gradually improving predictions over thousands of training iterations."},
+      {label:"Training A Model",      desc:"Training feeds data into a model, compares its output to the correct answer, calculates the error (loss), and uses backpropagation to nudge parameters toward better answers. This cycle repeats millions of times until the model converges."},
+      {label:"AI Applications Today", desc:"AI already touches daily life: YouTube's recommendation engine, spam filters in Gmail, navigation in Google Maps, real-time translation, medical imaging diagnostics, fraud detection at banks, and generative tools like ChatGPT."},
+      {label:"Ethics & Bias",         desc:"AI systems inherit biases from training data, leading to discriminatory outcomes in hiring, lending, and law enforcement. Ethical AI demands fairness audits, transparency, explainability, and accountability from the builders."},
+      {label:"Python For AI",         desc:"Python dominates AI due to readable syntax, an unparalleled ecosystem (TensorFlow, PyTorch, Scikit-learn, NumPy), and a massive community. Nearly every AI research paper and production system starts with Python."},
+      {label:"AI History & Milestones",desc:"From Turing's 1950 'Computing Machinery and Intelligence' to IBM Deep Blue (1997), AlphaGo (2016), GPT-3 (2020), and ChatGPT (2022), each milestone redefined what machines could do and reignited public fascination with AI."},
+      {label:"The AI Ecosystem",      desc:"The modern AI stack includes frameworks (TensorFlow, PyTorch), data tools (Pandas, NumPy), cloud platforms (AWS SageMaker, Google Vertex), experiment trackers (W&B), and deployment tools (Docker, FastAPI). Knowing this landscape is essential."},
+    ]
+  },
+  {
+    title:"Day 2",
+    short:"Python & Data Science",
+    color:"#fbbf24",
+    nodes:[
+      {label:"Variables & Types",     desc:"Python variables are dynamically typed — no declaration needed. Integers, floats, strings, booleans, and None are the primitives. Understanding mutability and type coercion prevents subtle bugs when processing datasets."},
+      {label:"Data Structures",       desc:"Lists (ordered, mutable), tuples (ordered, immutable), dictionaries (key-value), and sets (unique elements) are Python's core containers. Choosing the right structure for the job directly impacts code speed and clarity."},
+      {label:"Control Flow",          desc:"if-elif-else branches execute conditionally. For loops iterate collections; while loops run until a condition fails. List comprehensions provide elegant one-liners. Mastering flow control lets you transform raw datasets efficiently."},
+      {label:"Functions & Scope",     desc:"Functions encapsulate reusable logic, accept parameters, and return values. Lambda functions create anonymous one-liners. Understanding local vs global scope and closures is critical for writing modular, testable AI code."},
+      {label:"NumPy Arrays",          desc:"NumPy N-dimensional arrays are the backbone of scientific Python. Vectorised operations are 100× faster than Python loops because NumPy is implemented in C. Every ML framework stores data as NumPy-compatible tensors internally."},
+      {label:"Pandas DataFrames",     desc:"Pandas DataFrames are like programmable spreadsheets. You load CSV/JSON, filter rows, group columns, merge tables, and compute statistics in a few lines. Almost every real-world ML project starts with exploratory analysis in Pandas."},
+      {label:"Data Cleaning",         desc:"Real data is messy: missing values, duplicates, inconsistent formats, typos, outliers. Data cleaning — filling NaN values, standardising strings, removing duplicates — is unglamorous but the single most impactful step in any ML pipeline."},
+      {label:"Matplotlib & Seaborn",  desc:"Matplotlib generates publication-quality line plots, scatter plots, histograms, and heatmaps. Seaborn wraps Matplotlib with a statistical focus — pair plots, violin plots, and regression plots reveal patterns before modelling."},
+      {label:"Statistical Basics",    desc:"Mean, median, variance, standard deviation, correlation, and percentiles describe data distributions. Understanding skewness and kurtosis guides preprocessing choices. Statistical thinking prevents naive interpretations of model outputs."},
+      {label:"Jupyter Notebooks",     desc:"Jupyter Notebooks interleave live code, rich text, equations, and visualisations in a single document. They're the standard for exploratory data science, enabling cell-by-cell execution that accelerates the analyse-code-visualise loop."},
+      {label:"File I/O & APIs",       desc:"Reading CSVs, JSON APIs, SQL databases, and cloud storage are daily tasks in production AI. Python's open(), pandas.read_csv(), requests library, and SQLAlchemy form the toolkit for fetching and persisting data across systems."},
+      {label:"Virtual Environments",  desc:"Virtual environments (venv, conda) isolate project dependencies, preventing version clashes between projects. A requirements.txt or environment.yml file ensures reproducibility — critical when deploying models or onboarding collaborators."},
+    ]
+  },
+  {
+    title:"Day 3",
+    short:"Machine Learning",
+    color:"#f97316",
+    nodes:[
+      {label:"Supervised Learning",   desc:"In supervised learning, the algorithm learns from labelled (input, correct-output) pairs. The model extracts patterns to generalise to new, unseen inputs. Classification predicts categories; regression predicts continuous values."},
+      {label:"Unsupervised Learning", desc:"Unsupervised learning finds hidden structure in unlabelled data. K-Means clusters similar data points. PCA compresses high-dimensional data into fewer, more informative dimensions. DBSCAN identifies clusters of arbitrary shape."},
+      {label:"Linear Regression",     desc:"Linear regression models a continuous target as a weighted sum of input features plus a bias term. Ordinary Least Squares minimises the sum of squared residuals. It forms the mathematical foundation for understanding all ML algorithms."},
+      {label:"Decision Trees",        desc:"Decision trees partition data by splitting on feature thresholds that maximise information gain (or Gini impurity). The resulting if-else rules are highly interpretable — you can trace exactly why a prediction was made."},
+      {label:"K-Nearest Neighbors",   desc:"KNN classifies a new point by majority vote among its K closest training points, using Euclidean or other distance metrics. No training phase is needed, but prediction is slow (O(n)) and accuracy degrades in high-dimensional spaces."},
+      {label:"Feature Engineering",   desc:"Feature engineering transforms raw inputs into representations that make models smarter: normalising scales, encoding categorical variables with one-hot or target encoding, creating polynomial features, and removing irrelevant noise."},
+      {label:"Train-Test-Validation", desc:"The training set tunes model parameters; the validation set guides hyperparameter choices; the test set gives an honest final performance estimate. Peeking at the test set during development leads to deceptively optimistic accuracy reports."},
+      {label:"Overfitting & Underfitting",desc:"Overfitting: the model memorises training noise and fails on new data (high variance). Underfitting: the model is too simple to capture the signal (high bias). The bias-variance tradeoff guides model complexity selection."},
+      {label:"Model Evaluation Metrics",desc:"Accuracy is misleading for imbalanced datasets. Precision (relevance of positives), recall (coverage of true positives), F1-score (harmonic mean), and AUC-ROC (discrimination ability) together paint a complete performance picture."},
+      {label:"Gradient Descent",      desc:"Gradient descent iteratively adjusts model parameters in the direction that most reduces the loss function — like rolling a ball downhill toward the lowest point. Stochastic GD uses single samples; mini-batch GD balances speed and stability."},
+      {label:"Scikit-Learn Library",  desc:"Scikit-learn provides a consistent, elegant API for hundreds of ML algorithms, plus data preprocessing, model selection, and evaluation tools. Its Pipeline object chains preprocessing and modelling into a single, deployable artefact."},
+      {label:"K-Fold Cross Validation",desc:"K-fold CV trains on K-1 folds and tests on the remaining fold, rotating through all K combinations. Averaging the results gives a far more reliable performance estimate than a single train-test split, especially with small datasets."},
+    ]
+  },
+  {
+    title:"Day 4",
+    short:"Deep Learning",
+    color:"#8b5cf6",
+    nodes:[
+      {label:"Perceptron Model",      desc:"The perceptron — the simplest neural unit — computes a weighted sum of inputs, adds a bias, and passes the result through an activation function. Multiple perceptrons stacked in layers form the multi-layer perceptron (MLP), the original deep network."},
+      {label:"Network Architecture",  desc:"Architecture defines a network's shape: input layer (raw features), hidden layers (learned representations), output layer (predictions). Depth (layers) captures abstract patterns; width (neurons per layer) increases representational capacity."},
+      {label:"Activation Functions",  desc:"Activation functions inject non-linearity that allows networks to model complex patterns. ReLU (max(0,x)) is the modern default for hidden layers. Sigmoid squashes output to (0,1); softmax produces class probabilities for multi-class output layers."},
+      {label:"Backpropagation",       desc:"Backpropagation applies the chain rule of calculus to efficiently compute how much each weight contributed to the prediction error. These gradients are used by the optimiser to update every weight in the network simultaneously."},
+      {label:"Loss Functions",        desc:"Loss functions quantify prediction error: Mean Squared Error for regression, cross-entropy for classification. Training minimises the loss over the training set. Choosing the right loss aligns the optimisation objective with the real-world goal."},
+      {label:"Optimisers: Adam & SGD",desc:"SGD with momentum accelerates learning in consistent directions. Adam (Adaptive Moment Estimation) adapts the learning rate per parameter using first and second gradient moments — it's the most popular default optimiser in deep learning."},
+      {label:"Keras & TensorFlow",    desc:"TensorFlow (Google, 2015) provides a flexible deep learning framework with eager execution. Keras is its high-level API: you define models by stacking layers in model.add() calls, compile with a loss and optimiser, and train with model.fit()."},
+      {label:"Regularisation",        desc:"Dropout randomly silences neurons during training, preventing co-adaptation and forcing the network to learn redundant representations. L1/L2 weight penalties penalise large weights. Batch normalisation stabilises and accelerates training."},
+      {label:"Learning Rate",         desc:"The learning rate controls the size of each parameter update step. Too large: weights diverge chaotically. Too small: training crawls. Cyclical learning rates and warm-up schedules help models converge faster and escape sharp local minima."},
+      {label:"Batches & Epochs",      desc:"An epoch is one complete pass through the training dataset. A mini-batch is a subset (32–512 samples) processed per gradient update. Training for multiple epochs with appropriate batch sizes balances computational efficiency with stable learning."},
+      {label:"Model Saving & Loading",desc:"After expensive training, model weights are saved to disk (HDF5 .h5 or TensorFlow SavedModel format) for later inference. Serialising both the architecture and the learned weights ensures the full model can be restored in a new Python session."},
+      {label:"GPU Acceleration",      desc:"GPUs perform massively parallel matrix multiplications — exactly what forward and backward passes require. NVIDIA CUDA enables TensorFlow and PyTorch to run on GPU, cutting training time from days to hours and enabling experiments at scale."},
+    ]
+  },
+  {
+    title:"Day 5",
+    short:"Computer Vision",
+    color:"#00f5a0",
+    nodes:[
+      {label:"Images As Data",        desc:"A colour image is a 3D tensor of shape (height × width × 3). Each pixel stores red, green, and blue intensity (0–255). Treating images as numerical arrays lets us apply all the machinery of linear algebra and calculus to visual data."},
+      {label:"Convolutional Layers",  desc:"A convolution slides a small filter (kernel) across the image, computing dot products at each position. Filters learn to detect edges, textures, corners, and eventually complex shapes. Multiple stacked conv layers build hierarchical visual feature detectors."},
+      {label:"Pooling Layers",        desc:"Max pooling takes the maximum value in each spatial region, reducing resolution while retaining dominant features. This provides translation invariance (a cat remains a cat wherever it appears) and reduces parameters, cutting computational cost."},
+      {label:"Transfer Learning",     desc:"Pre-trained models like ResNet or EfficientNet, trained on 1.2 million ImageNet images, have already learned powerful visual features. You replace the final classification head, freeze early layers, and fine-tune on your much smaller dataset."},
+      {label:"Image Classification",  desc:"Classification assigns a single class label to the entire image (cat, dog, tumour-positive). CNNs extract a global feature vector from the final convolutional layers, which a fully connected head maps to class probabilities via softmax."},
+      {label:"Object Detection",      desc:"Detection finds every object in an image with a bounding box and class label. YOLO (You Only Look Once) does this in a single forward pass at real-time speeds. Applications include autonomous driving, medical imaging, and security systems."},
+      {label:"Data Augmentation",     desc:"Augmentation creates artificially varied training images via random crops, flips, rotations, colour jitter, and cutout. It prevents overfitting when data is scarce and teaches the model to be robust to the natural variations it will encounter in production."},
+      {label:"ResNet Architecture",   desc:"ResNet introduced skip (residual) connections that add the input directly to the conv layer output. This lets gradients flow through very deep networks (50–152 layers) without vanishing, enabling the training of far deeper and more powerful models."},
+      {label:"OpenCV Library",        desc:"OpenCV provides C++ and Python interfaces for real-time image processing: reading/writing images and video, color space conversion, edge detection (Canny), contour finding, template matching, and classical face detection via Haar cascades."},
+      {label:"Face Recognition",      desc:"Deep face recognition (e.g., FaceNet) maps faces to a compact embedding space where the same person's faces cluster together regardless of lighting or angle. A simple distance threshold then determines if two faces belong to the same individual."},
+      {label:"Semantic Segmentation", desc:"Segmentation assigns a class label to every single pixel: sky, road, pedestrian, building. U-Net's encoder-decoder architecture with skip connections enables precise, pixel-level predictions — critical for medical image analysis and autonomous driving."},
+      {label:"mAP & IoU Metrics",     desc:"Intersection over Union (IoU) measures bounding box overlap quality. Mean Average Precision (mAP) integrates precision across recall thresholds and classes — it's the standard benchmark metric for object detection competitions like COCO."},
+    ]
+  },
+  {
+    title:"Day 6",
+    short:"NLP & Generative AI",
+    color:"#f472b6",
+    nodes:[
+      {label:"Tokenisation",          desc:"Tokenisation splits raw text into discrete units (tokens) a model can process. Word tokenisation splits by whitespace; Byte-Pair Encoding (used by GPT) merges frequent character pairs, handling rare words and typos gracefully without an unknown-word problem."},
+      {label:"Word Embeddings",       desc:"Word2Vec and GloVe map words to dense, 100–300-dimensional vectors learned from co-occurrence statistics in billions of words. Semantic relationships emerge automatically: 'Paris' - 'France' + 'Italy' ≈ 'Rome'. Embeddings bootstrap NLP models with linguistic knowledge."},
+      {label:"Text Preprocessing",    desc:"NLP preprocessing normalises raw text: lowercasing, removing HTML/punctuation, stopword removal (the, a, is), stemming (running→run), and lemmatisation (better→good). Consistent preprocessing ensures the model doesn't treat identical concepts as different tokens."},
+      {label:"Sentiment Analysis",    desc:"Sentiment classifiers predict the emotional polarity of text: positive, negative, or neutral. Applications include brand monitoring, product review mining, political opinion tracking, and customer support triage — processing millions of texts programmatically."},
+      {label:"Bag of Words & TF-IDF", desc:"Bag-of-Words represents documents as word frequency vectors, ignoring order. TF-IDF weights rare informative words (high IDF) and down-weights common filler words. Despite simplicity, these representations achieve strong baselines for text classification tasks."},
+      {label:"RNNs & LSTMs",          desc:"Recurrent Neural Networks process text sequentially, maintaining hidden state that captures context. LSTMs add input, forget, and output gates that selectively retain long-range dependencies — solving the vanishing gradient problem that plagued vanilla RNNs."},
+      {label:"Transformer Model",     desc:"The 2017 'Attention Is All You Need' paper replaced recurrence with self-attention: every token directly attends to every other token, computing relevance weights. Transformers parallelise training on GPUs and scale to billions of parameters, powering all modern LLMs."},
+      {label:"BERT & GPT Models",     desc:"BERT (Google, 2018) pre-trains bidirectionally on masked language modelling, excelling at understanding tasks. GPT (OpenAI) pre-trains autoregressively on next-token prediction, excelling at generation. Fine-tuning either on task-specific data yields state-of-the-art performance."},
+      {label:"Prompt Engineering",    desc:"Prompt engineering crafts inputs that reliably elicit useful LLM outputs. Techniques include few-shot examples (showing desired I/O pairs), chain-of-thought (asking the model to reason step-by-step), and role-prompting (assigning a persona to shape tone and style)."},
+      {label:"Named Entity Recognition",desc:"NER identifies and classifies named entities in text: PERSON, ORG, LOC, DATE, MONEY. It enables information extraction at scale — populating knowledge graphs, summarising news, and routing support tickets — from unstructured text."},
+      {label:"Text Generation",       desc:"Autoregressive models like GPT predict the next token given all previous tokens, sampling from a probability distribution shaped by temperature (creativity) and top-p (nucleus sampling). This powers autocomplete, story generation, and code assistants."},
+      {label:"Chatbot Development",   desc:"A production chatbot combines intent classification (what does the user want?), entity extraction (which entities are mentioned?), dialogue state tracking (where are we in the conversation?), and response generation — increasingly handled end-to-end by fine-tuned LLMs."},
+    ]
+  },
+  {
+    title:"Day 7",
+    short:"AI Product Development",
+    color:"#fb7185",
+    nodes:[
+      {label:"Problem Definition",    desc:"Great AI products solve acute, frequent pain points. The product thinking process starts with problem discovery: who has it, how often, how severely, what workarounds exist, and whether AI is genuinely the right tool (vs a spreadsheet or rule-based system)."},
+      {label:"User Research",         desc:"User interviews and usability studies reveal the gap between what users say they want and what they actually do. For AI products, understanding tolerance for errors, expectations of explainability, and comfort with automation is critical to adoption."},
+      {label:"Data Strategy",         desc:"An AI product is only as good as its data. Data strategy covers source identification, labelling pipelines, privacy compliance (GDPR, PDPB), synthetic data generation, and the data flywheel: more users create more data, enabling a better model that attracts more users."},
+      {label:"Choosing The Right Model",desc:"Model selection balances accuracy, latency, model size, interpretability, maintenance cost, and available training data. A logistic regression that runs in 1ms may beat a transformer that takes 200ms when sub-second response time is the product's defining feature."},
+      {label:"REST API Development",  desc:"A REST API wraps your ML model in HTTP endpoints that any frontend or service can call. GET /predict?text=... returns a JSON prediction. Well-designed APIs include versioning, authentication, rate limiting, and clear error responses for production robustness."},
+      {label:"Flask & FastAPI",       desc:"Flask is a micro web framework perfect for wrapping ML models quickly. FastAPI offers async support, automatic OpenAPI docs, and Pydantic validation — preferred for production. Both let you serve model predictions as a scalable microservice."},
+      {label:"Frontend Integration",  desc:"A minimal product UI (HTML + Vanilla JS, or React) calls your Flask/FastAPI backend via fetch(). Showing confidence scores, highlighting uncertain predictions, and providing clear feedback loops dramatically improve perceived AI quality."},
+      {label:"Testing AI Systems",    desc:"AI testing goes beyond unit tests. You need model-level tests: performance on edge cases, adversarial inputs, slice evaluations (performance per demographic), and regression tests that catch silent degradation when models are retrained on new data."},
+      {label:"Deployment & Cloud",    desc:"From Heroku (one-click deploys) to Docker + AWS EC2/GCP Cloud Run (containerised scalability), deployment options span the complexity spectrum. Containerisation with Docker ensures the model's environment is identical from development to production."},
+      {label:"Production Monitoring", desc:"Models degrade silently as real-world data drifts from training distribution. Production monitoring tracks prediction confidence distributions, feature drift, response latency, and error rates. Alerts trigger retraining when performance falls below a threshold."},
+      {label:"AI Ethics & Fairness",  desc:"Ethical product development includes demographic parity audits, transparency (users should know when AI is making decisions), data minimisation (collect only what's needed), opt-out mechanisms, and clear human escalation paths when AI is uncertain."},
+      {label:"Pitching Your Product", desc:"Translating technical capability into business value is a distinct skill. A compelling AI product pitch covers: the problem (and its scale), your solution (and why AI), a live demo, data moat, go-to-market, and a crisp ask — whether for users, investment, or partnerships."},
+    ]
+  }
+];
+
+/* ──────────────────────────── MIND MAP ──────────────────────────── */
+const svg   = document.getElementById('mindmap-svg');
+const ttEl  = document.getElementById('mm-tooltip');
+const ttTit = document.getElementById('tt-title');
+const ttDsc = document.getElementById('tt-desc');
+let activeDay = 0;
+
+function svgEl(tag,attrs={}){
+  const el=document.createElementNS('http://www.w3.org/2000/svg',tag);
+  Object.entries(attrs).forEach(([k,v])=>el.setAttribute(k,v));
+  return el;
+}
+
+function wrapText(text,maxCh=10){
+  const words=text.split(' ');
+  const lines=[];let cur='';
+  words.forEach(w=>{
+    if(cur.length&&(cur+' '+w).length>maxCh){lines.push(cur.trim());cur=w;}
+    else{cur+=(cur?' ':'')+w;}
+  });
+  if(cur)lines.push(cur.trim());
+  return lines;
+}
+
+function buildMindMap(dayIdx){
+  svg.innerHTML='';
+  const day=DAYS[dayIdx];
+  const col=day.color;
+  const CX=430,CY=290;
+  const R1=158,R2=268;
+  const N=day.nodes;
+  const inner=N.slice(0,5),outer=N.slice(5,12);
+
+  // Precompute positions
+  inner.forEach((n,i)=>{
+    const a=(2*Math.PI*i/5)-Math.PI/2;
+    n._x=CX+R1*Math.cos(a); n._y=CY+R1*Math.sin(a);
+  });
+  outer.forEach((n,i)=>{
+    const a=(2*Math.PI*i/7)-Math.PI/2+(Math.PI/7);
+    n._x=CX+R2*Math.cos(a); n._y=CY+R2*Math.sin(a);
+  });
+
+  // Lines layer
+  const lg=svgEl('g');
+
+  // Center → inner
+  inner.forEach(n=>{
+    const mid={x:(CX+n._x)/2,y:(CY+n._y)/2-18};
+    lg.appendChild(svgEl('path',{
+      d:`M${CX},${CY} Q${mid.x},${mid.y} ${n._x},${n._y}`,
+      stroke:col+'55','stroke-width':'1.8',fill:'none',
+      'stroke-dasharray':'4 3',opacity:'.7'
+    }));
+  });
+
+  // Inner → outer (nearest)
+  outer.forEach((n,i)=>{
+    const ni=Math.round(i*5/7)%5;
+    const src=inner[ni];
+    lg.appendChild(svgEl('line',{
+      x1:src._x,y1:src._y,x2:n._x,y2:n._y,
+      stroke:col+'35','stroke-width':'1.2',opacity:'.6'
+    }));
+  });
+  svg.appendChild(lg);
+
+  // Nodes
+  function makeNode(node,r,isInner){
+    const g=svgEl('g',{transform:`translate(${node._x},${node._y})`,class:'mm-node'});
+    const ig=svgEl('g',{class:'mm-inner-g'});
+
+    // Glow
+    const glow=svgEl('circle',{r:r+14,cx:0,cy:0,fill:col+'18',class:'mm-glow',opacity:0});
+    ig.appendChild(glow);
+
+    // Circle
+    ig.appendChild(svgEl('circle',{r,cx:0,cy:0,fill:'#04091e',stroke:col,'stroke-width':isInner?'2':'1.5',class:'mm-circle'}));
+
+    // Text
+    const lines=wrapText(node.label, isInner?10:9);
+    const lh=11;
+    const sy=-(lines.length-1)*lh/2;
+    const tg=svgEl('g',{'pointer-events':'none'});
+    lines.forEach((l,j)=>{
+      const t=svgEl('text',{x:0,y:sy+j*lh,'text-anchor':'middle','dominant-baseline':'middle',
+        fill:'#dceeff','font-size':isInner?'10':'9','font-family':"'Exo 2',sans-serif",
+        'font-weight':isInner?'500':'400'});
+      t.textContent=l;
+      tg.appendChild(t);
+    });
+    ig.appendChild(tg);
+    g.appendChild(ig);
+
+    // Events
+    g.addEventListener('mouseenter',e=>{
+      glow.setAttribute('opacity','1');
+      showTT(node,col,e);
+    });
+    g.addEventListener('mousemove',e=>moveTT(e));
+    g.addEventListener('mouseleave',()=>{
+      glow.setAttribute('opacity','0');
+      hideTT();
+    });
+
+    return g;
+  }
+
+  outer.forEach(n=>svg.appendChild(makeNode(n,34,false)));
+  inner.forEach(n=>svg.appendChild(makeNode(n,40,true)));
+
+  // Center
+  const cg=svgEl('g',{transform:`translate(${CX},${CY})`});
+  const cig=svgEl('g');
+  cig.appendChild(svgEl('circle',{r:56,cx:0,cy:0,fill:col+'12'}));
+  cig.appendChild(svgEl('circle',{r:48,cx:0,cy:0,fill:'#040b22',stroke:col,'stroke-width':'2.5'}));
+
+  const ct=svgEl('text',{x:0,y:-12,'text-anchor':'middle','dominant-baseline':'middle',
+    fill:col,'font-size':'12','font-family':"'Orbitron',sans-serif",'font-weight':'700','pointer-events':'none'});
+  ct.textContent=day.title.toUpperCase();
+  cig.appendChild(ct);
+
+  const stLines=wrapText(day.short,10);
+  stLines.forEach((l,i)=>{
+    const t=svgEl('text',{x:0,y:4+i*11,'text-anchor':'middle','dominant-baseline':'middle',
+      fill:'#dceeff','font-size':'9','font-family':"'Exo 2',sans-serif",'font-weight':'300','pointer-events':'none'});
+    t.textContent=l;
+    cig.appendChild(t);
+  });
+
+  cg.appendChild(cig);
+  svg.appendChild(cg);
+}
+
+function showTT(node,color,e){
+  ttTit.textContent=node.label;
+  ttTit.style.color=color;
+  ttDsc.textContent=node.desc;
+  moveTT(e);
+  ttEl.classList.add('show');
+}
+function moveTT(e){
+  let x=e.clientX+16, y=e.clientY-20;
+  if(x+280>window.innerWidth) x=e.clientX-296;
+  if(y+160>window.innerHeight) y=e.clientY-170;
+  ttEl.style.left=x+'px';
+  ttEl.style.top=y+'px';
+}
+function hideTT(){ttEl.classList.remove('show')}
+
+// Build tabs
+const tabContainer=document.getElementById('day-tabs');
+DAYS.forEach((d,i)=>{
+  const btn=document.createElement('button');
+  btn.className='day-tab'+(i===0?' active':'');
+  btn.textContent=d.title+' · '+d.short;
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.day-tab').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    activeDay=i;
+    svg.style.opacity='0';
+    setTimeout(()=>{buildMindMap(i);svg.style.opacity='1';},180);
+  });
+  tabContainer.appendChild(btn);
+});
+svg.style.transition='opacity .2s';
+buildMindMap(0);
+
+/* ──────────────────────────── PEOPLE CAROUSEL ──────────────────────────── */
+const PEOPLE=[
+  {name:'Soumil Sir',   type:'Mentor & Teacher', role:'The Architect of Insight',   color:'#fbbf24', init:'SS'},
+  {name:'Saesha',       type:'Batchmate',         role:'The Stressed One',            color:'#f472b6', init:'Sa'},
+  {name:'Smayan',       type:'Batchmate',         role:'The 24/7 Coder',             color:'#00cfff', init:'Sm'},
+  {name:'Poorvik',      type:'Batchmate',         role:'The Ecstatic One',            color:'#00f5a0', init:'Po'},
+];
+
+let currentPerson=0;
+const carousel=document.getElementById('carousel');
+const dotsWrap=document.getElementById('nav-dots');
+
+// Build cards
+PEOPLE.forEach((p,i)=>{
+  const card=document.createElement('div');
+  card.className='person-card';
+  card.dataset.index=i;
+  card.style.setProperty('--av-color',p.color);
+
+  card.innerHTML=`
+    <div class="person-avatar" style="background:linear-gradient(135deg,${p.color}22,${p.color}08)">
+      <span style="color:${p.color}">${p.init}</span>
+    </div>
+    <div class="person-name">${p.name}</div>
+    <div class="person-type">${p.type}</div>
+    <div class="person-role">${p.role}</div>
+  `;
+  carousel.appendChild(card);
+
+  const dot=document.createElement('div');
+  dot.className='nav-dot'+(i===0?' active':'');
+  dot.addEventListener('click',()=>goTo(i));
+  dotsWrap.appendChild(dot);
+});
+
+function getPos(cardIdx,cur,total){
+  const diff=((cardIdx-cur)+total)%total;
+  if(diff===0) return 'pos-active';
+  if(diff===1) return 'pos-next';
+  if(diff===total-1) return 'pos-prev';
+  if(diff===2) return 'pos-far-right';
+  return 'pos-far-left';
+}
+
+function goTo(idx){
+  currentPerson=(idx+PEOPLE.length)%PEOPLE.length;
+  const cards=document.querySelectorAll('.person-card');
+  const dots=document.querySelectorAll('.nav-dot');
+  cards.forEach((c,i)=>{
+    c.className='person-card '+getPos(i,currentPerson,PEOPLE.length);
+    c.style.setProperty('--av-color',PEOPLE[i].color);
+  });
+  dots.forEach((d,i)=>d.classList.toggle('active',i===currentPerson));
+}
+
+document.getElementById('prev-btn').addEventListener('click',()=>goTo(currentPerson-1));
+document.getElementById('next-btn').addEventListener('click',()=>goTo(currentPerson+1));
+
+// Keyboard
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight')goTo(currentPerson+1);
+  if(e.key==='ArrowLeft') goTo(currentPerson-1);
+});
+
+// Init carousel
+goTo(0);
+
+// Touch/swipe for carousel
+let txStart=0;
+carousel.addEventListener('touchstart',e=>{txStart=e.touches[0].clientX},{passive:true});
+carousel.addEventListener('touchend',e=>{
+  const dx=txStart-e.changedTouches[0].clientX;
+  if(Math.abs(dx)>40){dx>0?goTo(currentPerson+1):goTo(currentPerson-1);}
+});
+
+</script>
+</body>
+</html>
